@@ -25,6 +25,8 @@ class DashboardNode(Node):
         self.motor_status = "OK"
         self.lidar_status = "Active"
         self.imu_status = "Calibrated"
+        self.waypoint_queue = []
+        self.current_goal_id = None
         
         # Waypoints: 0=Base, 1-4=Tables
         self.waypoints = {
@@ -61,6 +63,16 @@ class DashboardNode(Node):
         
         if min_dist < 0.5:
             self.current_position = self.waypoints[closest_wp]["name"]
+            
+            # If we reached our current goal
+            if self.robot_status == "Navigating" and self.current_goal_id == closest_wp:
+                if len(self.waypoint_queue) > 0:
+                    next_wp = self.waypoint_queue.pop(0)
+                    self.get_logger().info(f"Reached goal. Popping next from queue: {next_wp}")
+                    self.navigate_to_waypoint(next_wp, mode='shift')
+                else:
+                    self.robot_status = "Idle"
+                    self.current_goal_id = None
     
     def odom_callback(self, msg):
         # Update motor status from odometry
@@ -72,14 +84,31 @@ class DashboardNode(Node):
         else:
             self.motor_status = "OK"
     
-    def navigate_to_waypoint(self, waypoint_id):
+    def navigate_to_waypoint(self, waypoint_id, mode='shift'):
         """Send navigation goal to waypoint"""
         if waypoint_id not in self.waypoints:
             self.get_logger().error(f"Invalid waypoint: {waypoint_id}")
             return
-        
+            
+        if mode == 'queue' and self.robot_status == 'Navigating':
+            self.waypoint_queue.append(waypoint_id)
+            wp = self.waypoints[waypoint_id]
+            self.get_logger().info(f"Queued {wp['name']}")
+            q_len = len(self.waypoint_queue)
+            self.target_destination = f"{self.waypoints[self.current_goal_id]['name']} (+{q_len} in queue)"
+            return
+            
+        if mode == 'shift':
+            self.waypoint_queue.clear()
+            
+        self.current_goal_id = waypoint_id
         wp = self.waypoints[waypoint_id]
-        self.target_destination = wp["name"]
+        
+        if len(self.waypoint_queue) > 0:
+            self.target_destination = f"{wp['name']} (+{len(self.waypoint_queue)} in queue)"
+        else:
+            self.target_destination = wp["name"]
+            
         self.robot_status = "Navigating"
         
         goal = PoseStamped()
@@ -129,6 +158,8 @@ class DashboardNode(Node):
             "motorStatus": self.motor_status,
             "lidarStatus": self.lidar_status,
             "imuStatus": self.imu_status,
+            "currentGoalId": self.current_goal_id,
+            "waypointQueue": self.waypoint_queue,
             "waypoints": [
                 {"id": 0, "name": "Base Station", "x": 0.0, "y": 0.0},
                 {"id": 1, "name": "Table 1", "x": -1.5, "y": 1.5},
@@ -171,7 +202,8 @@ class DashboardHTTPHandler(SimpleHTTPRequestHandler):
             
             if cmd_type == 'navigate':
                 waypoint_id = command.get('waypoint')
-                dashboard_node.navigate_to_waypoint(waypoint_id)
+                mode = command.get('mode', 'shift')
+                dashboard_node.navigate_to_waypoint(waypoint_id, mode)
             
             elif cmd_type == 'pause':
                 dashboard_node.pause_navigation()
