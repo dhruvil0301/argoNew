@@ -8,7 +8,7 @@ from nav_msgs.msg import Odometry
 from std_msgs.msg import String
 import json
 import threading
-from http.server import HTTPServer, SimpleHTTPRequestHandler
+from http.server import ThreadingHTTPServer, SimpleHTTPRequestHandler
 import os
 
 class DashboardNode(Node):
@@ -173,70 +173,107 @@ dashboard_node = None
 
 class DashboardHTTPHandler(SimpleHTTPRequestHandler):
     def do_GET(self):
-        if self.path == '/api/state':
-            self.send_response(200)
-            self.send_header('Content-type', 'application/json')
-            self.send_header('Access-Control-Allow-Origin', '*')
-            self.end_headers()
-            state = dashboard_node.get_state()
-            self.wfile.write(json.dumps(state).encode())
-        
-        elif self.path == '/':
-            self.send_response(200)
-            self.send_header('Content-type', 'text/html')
-            self.end_headers()
-            with open(os.path.join(os.path.dirname(__file__), 'dashboard.html'), 'rb') as f:
-                self.wfile.write(f.read())
-        
-        else:
-            self.send_response(404)
-            self.end_headers()
+        try:
+            if self.path == '/api/state':
+                self.send_response(200)
+                self.send_header('Content-type', 'application/json')
+                self.send_header('Access-Control-Allow-Origin', '*')
+                self.end_headers()
+                state = dashboard_node.get_state()
+                self.wfile.write(json.dumps(state).encode())
+            
+            elif self.path in ['', '/']:
+                self.send_response(200)
+                self.send_header('Content-type', 'text/html')
+                self.end_headers()
+                with open(os.path.join(os.path.dirname(__file__), 'dashboard.html'), 'rb') as f:
+                    self.wfile.write(f.read())
+            
+            else:
+                # Serve static files relative to the script directory
+                script_dir = os.path.dirname(os.path.abspath(__file__))
+                clean_path = self.path.lstrip('/')
+                file_path = os.path.join(script_dir, clean_path)
+                if os.path.exists(file_path) and os.path.isfile(file_path):
+                    self.send_response(200)
+                    if file_path.endswith('.png'):
+                        self.send_header('Content-type', 'image/png')
+                    elif file_path.endswith('.jpg') or file_path.endswith('.jpeg'):
+                        self.send_header('Content-type', 'image/jpeg')
+                    elif file_path.endswith('.webp'):
+                        self.send_header('Content-type', 'image/webp')
+                    elif file_path.endswith('.svg'):
+                        self.send_header('Content-type', 'image/svg+xml')
+                    elif file_path.endswith('.css'):
+                        self.send_header('Content-type', 'text/css')
+                    elif file_path.endswith('.js'):
+                        self.send_header('Content-type', 'application/javascript')
+                    self.end_headers()
+                    with open(file_path, 'rb') as f:
+                        self.wfile.write(f.read())
+                else:
+                    self.send_response(404)
+                    self.end_headers()
+        except (ConnectionAbortedError, ConnectionResetError, BrokenPipeError):
+            pass # Client disconnected
+        except Exception as e:
+            print(f"Error in do_GET: {e}")
     
     def do_POST(self):
-        if self.path == '/api/command':
-            content_length = int(self.headers['Content-Length'])
-            post_data = self.rfile.read(content_length)
-            command = json.loads(post_data.decode())
+        try:
+            if self.path == '/api/command':
+                content_length = int(self.headers['Content-Length'])
+                post_data = self.rfile.read(content_length)
+                command = json.loads(post_data.decode())
+                
+                cmd_type = command.get('command')
+                
+                if cmd_type == 'navigate':
+                    waypoint_id = command.get('waypoint')
+                    mode = command.get('mode', 'shift')
+                    dashboard_node.navigate_to_waypoint(waypoint_id, mode)
+                
+                elif cmd_type == 'pause':
+                    dashboard_node.pause_navigation()
+                
+                elif cmd_type == 'cancel':
+                    dashboard_node.cancel_navigation()
+                
+                elif cmd_type == 'emergency_stop':
+                    dashboard_node.emergency_stop()
+                
+                self.send_response(200)
+                self.send_header('Content-type', 'application/json')
+                self.send_header('Access-Control-Allow-Origin', '*')
+                self.end_headers()
+                self.wfile.write(json.dumps({"status": "ok"}).encode())
             
-            cmd_type = command.get('command')
-            
-            if cmd_type == 'navigate':
-                waypoint_id = command.get('waypoint')
-                mode = command.get('mode', 'shift')
-                dashboard_node.navigate_to_waypoint(waypoint_id, mode)
-            
-            elif cmd_type == 'pause':
-                dashboard_node.pause_navigation()
-            
-            elif cmd_type == 'cancel':
-                dashboard_node.cancel_navigation()
-            
-            elif cmd_type == 'emergency_stop':
-                dashboard_node.emergency_stop()
-            
-            self.send_response(200)
-            self.send_header('Content-type', 'application/json')
-            self.send_header('Access-Control-Allow-Origin', '*')
-            self.end_headers()
-            self.wfile.write(json.dumps({"status": "ok"}).encode())
-        
-        else:
-            self.send_response(404)
-            self.end_headers()
+            else:
+                self.send_response(404)
+                self.end_headers()
+        except (ConnectionAbortedError, ConnectionResetError, BrokenPipeError):
+            pass # Client disconnected
+        except Exception as e:
+            print(f"Error in do_POST: {e}")
     
     def do_OPTIONS(self):
-        self.send_response(200)
-        self.send_header('Access-Control-Allow-Origin', '*')
-        self.send_header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
-        self.send_header('Access-Control-Allow-Headers', 'Content-Type')
-        self.end_headers()
+        try:
+            self.send_response(200)
+            self.send_header('Access-Control-Allow-Origin', '*')
+            self.send_header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
+            self.send_header('Access-Control-Allow-Headers', 'Content-Type')
+            self.end_headers()
+        except (ConnectionAbortedError, ConnectionResetError, BrokenPipeError):
+            pass
+        except Exception as e:
+            print(f"Error in do_OPTIONS: {e}")
     
     def log_message(self, format, *args):
         pass
 
 def run_http_server():
     """Run HTTP server in background thread"""
-    server = HTTPServer(('0.0.0.0', 8080), DashboardHTTPHandler)
+    server = ThreadingHTTPServer(('0.0.0.0', 8080), DashboardHTTPHandler)
     print("Dashboard server running on http://0.0.0.0:8080")
     server.serve_forever()
 
