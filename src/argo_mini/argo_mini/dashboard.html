@@ -607,7 +607,7 @@
         /* Main Dashboard Grid */
         .dashboard-grid {
             display: grid;
-            grid-template-columns: 28% 36% 36%;
+            grid-template-columns: 26% 42% 32%;
             gap: 24px;
         }
 
@@ -981,9 +981,216 @@
             text-transform: uppercase;
         }
 
-        /* Right Column: Map Overview & Destination Selector */
+        /* Center Column: Map Overview (with Route Status) */
         .map-card-container {
             flex: 1;
+        }
+
+        /* Route status inside map overview */
+        .map-route-status {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            padding-top: 4px;
+            border-top: 1px solid var(--border-color);
+            margin-top: 4px;
+        }
+
+        .map-route-display {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 6px 0;
+        }
+
+        .map-route-point {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            min-width: 60px;
+        }
+
+        .map-point-code {
+            font-size: 15px;
+            font-weight: 700;
+            background: var(--accent-light);
+            color: var(--accent);
+            padding: 5px 10px;
+            border-radius: var(--border-radius-sm);
+            letter-spacing: 0.5px;
+        }
+
+        .map-point-label {
+            font-size: 10px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        .map-route-line-container {
+            flex: 1;
+            position: relative;
+            padding: 0 10px;
+        }
+
+        .map-route-line {
+            height: 4px;
+            background: var(--border-color);
+            border-radius: 2px;
+            position: relative;
+        }
+
+        .map-route-fill {
+            height: 100%;
+            background: var(--accent-gradient);
+            border-radius: 2px;
+            width: 0%;
+            transition: width 0.5s cubic-bezier(0.1, 0.8, 0.3, 1);
+        }
+
+        .map-progress-dot {
+            width: 20px;
+            height: 20px;
+            background: var(--accent);
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 0%;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 0 8px rgba(163, 146, 255, 0.5);
+            transition: left 0.5s cubic-bezier(0.1, 0.8, 0.3, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+        }
+
+        .map-progress-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-top: -6px;
+        }
+
+        .map-timeline {
+            display: flex;
+            gap: 0;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .map-timeline-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            opacity: 0.4;
+            transition: var(--transition);
+            flex: 1;
+            position: relative;
+        }
+
+        .map-timeline-step:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            top: 14px;
+            left: 60%;
+            width: 80%;
+            height: 2px;
+            background: var(--border-color);
+        }
+
+        .map-timeline-step.completed:not(:last-child)::after {
+            background: var(--accent);
+        }
+
+        .map-timeline-step.active {
+            opacity: 1;
+        }
+
+        .map-timeline-step.completed {
+            opacity: 0.85;
+        }
+
+        .map-step-bullet {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: var(--border-color);
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 700;
+            z-index: 1;
+        }
+
+        .map-timeline-step.active .map-step-bullet {
+            background: var(--accent-gradient);
+            color: white;
+            box-shadow: 0 0 10px rgba(163, 146, 255, 0.4);
+        }
+
+        .map-timeline-step.completed .map-step-bullet {
+            background: var(--success-light);
+            color: var(--success);
+        }
+
+        .map-step-label {
+            font-size: 10px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        .map-timeline-step.active .map-step-label {
+            color: var(--accent);
+        }
+
+        .map-route-status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            background: var(--success-light);
+            color: var(--success);
+        }
+
+        .map-route-status-badge.idle {
+            background: var(--accent-light);
+            color: var(--accent);
+        }
+
+        .map-route-status-badge.paused {
+            background: var(--warning-light);
+            color: var(--warning);
+        }
+
+        .map-route-status-badge.emergency {
+            background: var(--danger-light);
+            color: var(--danger);
+        }
+
+        .status-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: currentColor;
+            animation: pulse-dot 1.4s ease-in-out infinite;
+        }
+
+        @keyframes pulse-dot {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(0.7); }
         }
 
         .map-container {
@@ -1232,7 +1439,137 @@
         }
 
         /* Responsive Design */
+        /* Orders Sidebar */
+        .orders-sidebar {
+            position: fixed;
+            top: 0;
+            left: 280px;
+            width: 340px;
+            height: 100vh;
+            background: var(--bg-sidebar);
+            border-right: 1px solid var(--border-color);
+            box-shadow: 4px 0 24px rgba(0,0,0,0.18);
+            z-index: 90;
+            display: flex;
+            flex-direction: column;
+            transform: translateX(-120%);
+            transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+            overflow: hidden;
+        }
+        .orders-sidebar.open {
+            transform: translateX(0);
+        }
+        .orders-sidebar-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 24px 20px 16px;
+            border-bottom: 1px solid var(--border-color);
+            background: var(--accent-gradient);
+        }
+        .orders-sidebar-header h2 {
+            font-size: 17px;
+            font-weight: 700;
+            color: white;
+        }
+        .orders-sidebar-header p {
+            font-size: 11px;
+            color: rgba(255,255,255,0.75);
+            margin-top: 2px;
+        }
+        .orders-close-btn {
+            width: 30px; height: 30px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.18);
+            border: none; color: white; font-size: 16px;
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            transition: var(--transition);
+        }
+        .orders-close-btn:hover { background: rgba(255,255,255,0.3); }
+        .orders-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+        .orders-empty {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            gap: 12px;
+            color: var(--text-secondary);
+            font-size: 13px;
+            text-align: center;
+            padding: 40px 20px;
+        }
+        .orders-empty-icon { font-size: 40px; }
+        .order-table-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius-md);
+            overflow: hidden;
+            transition: var(--transition);
+        }
+        .order-table-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 14px;
+            background: var(--accent-light);
+            border-bottom: 1px solid var(--border-color);
+        }
+        .order-table-name {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--accent);
+        }
+        .order-table-count {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+        .order-items-list {
+            padding: 10px 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .order-item-line {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13px;
+        }
+        .order-item-name { color: var(--text-primary); font-weight: 500; }
+        .order-item-sub  { color: var(--accent); font-weight: 600; font-size: 12px; }
+        .order-table-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 14px;
+            border-top: 1px solid var(--border-color);
+            background: var(--bg-app);
+        }
+        .order-table-total { font-size: 14px; font-weight: 700; color: var(--text-primary); }
+        .order-table-total span { color: var(--accent); }
+        .btn-clear-table {
+            padding: 6px 12px;
+            background: var(--danger-light);
+            color: var(--danger);
+            border: 1px solid transparent;
+            border-radius: var(--border-radius-sm);
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .btn-clear-table:hover { background: var(--danger); color: white; }
         @media (max-width: 1200px) {
+            .orders-sidebar { left: 80px; width: 300px; }
             .dashboard-grid {
                 grid-template-columns: 1fr;
             }
@@ -1284,6 +1621,157 @@
                 flex: 1;
             }
         }
+
+        /* ========================
+           RESTAURANT MENU MODAL
+        ======================== */
+        .menu-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(5, 3, 12, 0.75);
+            backdrop-filter: blur(14px);
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+        }
+        .menu-overlay.open { display: flex; }
+
+        @keyframes menuSlideIn {
+            from { opacity: 0; transform: translateY(28px) scale(0.96); }
+            to   { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .menu-modal {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius-lg);
+            width: 92%;
+            max-width: 680px;
+            max-height: 88vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 32px 80px rgba(0,0,0,0.5);
+            animation: menuSlideIn 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .menu-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 22px 28px;
+            background: var(--accent-gradient);
+            color: white;
+        }
+        .menu-header-info h2 { font-size: 19px; font-weight: 700; color: white; }
+        .menu-header-info p  { font-size: 12px; color: rgba(255,255,255,0.75); margin-top: 2px; font-weight: 500; }
+        .menu-waiting-badge {
+            display: flex; align-items: center; gap: 6px;
+            background: rgba(255,255,255,0.18); padding: 7px 14px;
+            border-radius: 20px; font-size: 12px; font-weight: 700; color: white;
+        }
+        .menu-tabs {
+            display: flex;
+            padding: 0 24px;
+            border-bottom: 1px solid var(--border-color);
+            background: var(--bg-card);
+        }
+        .menu-tab {
+            padding: 13px 18px; background: transparent; border: none;
+            font-size: 13px; font-weight: 600; color: var(--text-secondary);
+            cursor: pointer; border-bottom: 2px solid transparent; transition: var(--transition);
+        }
+        .menu-tab.active  { color: var(--accent); border-bottom-color: var(--accent); }
+        .menu-tab:hover   { color: var(--text-primary); }
+        .menu-body {
+            flex: 1; overflow-y: auto; padding: 18px 24px;
+            display: flex; flex-direction: column; gap: 10px;
+        }
+        .menu-item-row {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 13px 16px; background: var(--bg-app);
+            border: 1px solid var(--border-color); border-radius: var(--border-radius-md);
+            transition: var(--transition);
+        }
+        .menu-item-row:hover { border-color: var(--accent); background: var(--accent-light); }
+        .menu-item-info  { display: flex; align-items: center; gap: 12px; }
+        .menu-item-emoji { font-size: 22px; width: 36px; text-align: center; }
+        .menu-item-details h4   { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+        .menu-item-details span { font-size: 11px; color: var(--text-secondary); font-weight: 500; }
+        .menu-item-price { font-size: 14px; font-weight: 700; color: var(--accent); }
+        .menu-item-controls { display: flex; align-items: center; gap: 10px; }
+        .qty-btn {
+            width: 28px; height: 28px; border-radius: 50%;
+            border: 1.5px solid var(--border-color); background: var(--bg-card);
+            color: var(--text-primary); font-size: 15px; font-weight: 700;
+            cursor: pointer; display: flex; align-items: center; justify-content: center; transition: var(--transition);
+        }
+        .qty-btn:hover { background: var(--accent); border-color: var(--accent); color: white; }
+        .qty-display { font-size: 14px; font-weight: 700; color: var(--text-primary); min-width: 18px; text-align: center; }
+
+        /* Cart */
+        .menu-cart {
+            padding: 14px 24px; border-top: 1px solid var(--border-color);
+            background: var(--bg-card); display: flex; flex-direction: column; gap: 10px;
+        }
+        .cart-items-preview { display: flex; flex-wrap: wrap; gap: 6px; min-height: 28px; }
+        .cart-chip {
+            padding: 4px 10px; background: var(--accent-light);
+            color: var(--accent); border-radius: 20px; font-size: 12px; font-weight: 600;
+        }
+        .cart-empty-msg { font-size: 12px; color: var(--text-secondary); font-style: italic; }
+        .cart-footer { display: flex; justify-content: space-between; align-items: center; }
+        .cart-total { font-size: 17px; font-weight: 700; color: var(--text-primary); }
+        .cart-total span { color: var(--accent); }
+        .cart-actions { display: flex; gap: 10px; }
+        .btn-place-order {
+            padding: 11px 22px; background: var(--accent-gradient); color: white;
+            border: none; border-radius: var(--border-radius-md); font-size: 13px; font-weight: 700;
+            cursor: pointer; transition: var(--transition);
+        }
+        .btn-place-order:hover { opacity: 0.9; box-shadow: 0 6px 20px rgba(134,111,230,0.3); }
+        .btn-place-order:disabled { opacity: 0.4; cursor: not-allowed; }
+        .btn-task-done-menu {
+            padding: 11px 18px; background: var(--danger-light); color: var(--danger);
+            border: 1px solid transparent; border-radius: var(--border-radius-md);
+            font-size: 13px; font-weight: 700; cursor: pointer; transition: var(--transition);
+        }
+        .btn-task-done-menu:hover { background: var(--danger); color: white; }
+
+        /* Arrival Prompt */
+        .arrival-modal {
+            background: var(--bg-card); border: 1px solid var(--border-color);
+            border-radius: var(--border-radius-lg); padding: 32px; width: 90%; max-width: 400px;
+            box-shadow: 0 24px 60px rgba(0,0,0,0.4); display: flex; flex-direction: column;
+            gap: 18px; text-align: center; animation: menuSlideIn 0.3s cubic-bezier(0.16,1,0.3,1);
+        }
+        .arrival-icon { font-size: 46px; line-height: 1; }
+        .arrival-modal h2 { font-size: 19px; font-weight: 700; color: var(--text-primary); }
+        .arrival-modal p  { font-size: 13px; color: var(--text-secondary); line-height: 1.55; }
+        .arrival-actions  { display: flex; flex-direction: column; gap: 10px; }
+
+        /* Order Toast */
+        .order-toast {
+            position: fixed; bottom: 28px; left: 50%;
+            transform: translateX(-50%) translateY(120px);
+            background: var(--bg-card); border: 1px solid var(--success);
+            border-radius: var(--border-radius-md); padding: 13px 22px;
+            display: flex; align-items: center; gap: 10px;
+            font-size: 13px; font-weight: 600; color: var(--text-primary);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3); z-index: 3000;
+            transition: transform 0.4s cubic-bezier(0.16,1,0.3,1);
+        }
+        .order-toast.show { transform: translateX(-50%) translateY(0); }
+
+        /* Waiting badge */
+        .waiting-badge {
+            display: none; align-items: center; gap: 8px;
+            padding: 7px 14px; background: var(--warning-light); color: var(--warning);
+            border-radius: var(--border-radius-sm); font-size: 12px; font-weight: 700;
+            margin-top: 4px; animation: pulseBg 1.8s ease-in-out infinite;
+        }
+        .waiting-badge.visible { display: flex; }
+        @keyframes pulseBg { 0%,100% { opacity:1; } 50% { opacity:0.6; } }
     </style>
 </head>
 
@@ -1308,11 +1796,11 @@
                         </span>
                         <span>Dashboard</span>
                     </li>
-                    <li class="nav-item" onclick="document.getElementById('mapContainer').scrollIntoView({behavior: 'smooth'})">
+                    <li class="nav-item" id="ordersNavItem" onclick="toggleOrdersSidebar()">
                         <span class="nav-icon">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"></path><rect x="9" y="3" width="6" height="4" rx="1" ry="1"></rect><line x1="9" y1="12" x2="15" y2="12"></line><line x1="9" y1="16" x2="13" y2="16"></line></svg>
                         </span>
-                        <span>Map Overview</span>
+                        <span>Orders <span id="ordersBadge" style="display:none;background:var(--danger);color:white;border-radius:10px;padding:1px 7px;font-size:10px;margin-left:4px;">0</span></span>
                     </li>
                     <li class="nav-item" onclick="document.getElementById('waypointGrid').scrollIntoView({behavior: 'smooth'})">
                         <span class="nav-icon">
@@ -1338,6 +1826,24 @@
                 <div class="theme-toggle-container">
                     <button class="theme-btn" id="theme-light-btn" onclick="setTheme('light')">Light</button>
                     <button class="theme-btn active" id="theme-dark-btn" onclick="setTheme('dark')">Dark</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Orders Sidebar Panel -->
+        <div class="orders-sidebar" id="ordersSidebar">
+            <div class="orders-sidebar-header">
+                <div>
+                    <h2>📋 Orders List</h2>
+                    <p id="ordersSidebarSubtitle">No active orders</p>
+                </div>
+                <button class="orders-close-btn" onclick="toggleOrdersSidebar()">✕</button>
+            </div>
+            <div class="orders-body" id="ordersSidebarBody">
+                <div class="orders-empty">
+                    <div class="orders-empty-icon">🍽️</div>
+                    <strong>No orders yet</strong>
+                    <span>Orders will appear here when customers place them through the robot.</span>
                 </div>
             </div>
         </div>
@@ -1443,89 +1949,62 @@
                     </div>
                 </div>
 
-                <!-- Center Column: Mission Card & Showcase -->
+                <!-- Center Column: Map Overview with Route Status -->
                 <div class="grid-col col-center">
-                    <div class="ui-card mission-card">
+                    <div class="ui-card map-card-container">
                         <div class="card-header">
-                            <h3>Current Mission Info</h3>
+                            <h3>Map Overview</h3>
+                            <span class="map-route-status-badge idle" id="mapStatusBadge">
+                                <span class="status-dot"></span>
+                                <span id="mapStatusBadgeText">Idle</span>
+                            </span>
                         </div>
-                        <div class="route-display">
-                            <div class="route-point">
-                                <span class="point-code" id="routeOrigin">BASE</span>
-                                <span class="point-label" id="statusPosition">Base Station</span>
-                            </div>
-                            <div class="route-line-container">
-                                <div class="route-line">
-                                    <div class="route-progress-dot" id="routeProgressDot"></div>
+                        <div class="map-container" id="mapContainer">
+                            <canvas id="mapCanvas"></canvas>
+                        </div>
+                        <div class="waiting-badge" id="waitingBadge">⏳ Robot waiting…</div>
+                        <!-- Route Status embedded in Map Overview -->
+                        <div class="map-route-status">
+                            <div class="map-route-display">
+                                <div class="map-route-point">
+                                    <span class="map-point-code" id="routeOrigin">BASE</span>
+                                    <span class="map-point-label" id="statusPosition">Base Station</span>
+                                </div>
+                                <div class="map-route-line-container">
+                                    <div class="map-route-line">
+                                        <div class="map-route-fill" id="mapRouteFill" style="width:0%"></div>
+                                        <div class="map-progress-dot" id="routeProgressDot">🤖</div>
+                                    </div>
+                                </div>
+                                <div class="map-route-point">
+                                    <span class="map-point-code" id="routeDest">GOAL</span>
+                                    <span class="map-point-label" id="statusTargetShort">Base Station</span>
                                 </div>
                             </div>
-                            <div class="route-point">
-                                <span class="point-code" id="routeDest">GOAL</span>
-                                <span class="point-label" id="statusTargetShort">Base Station</span>
-                            </div>
-                        </div>
-                        <div class="progress-section">
-                            <div class="progress-bar-bg">
-                                <div class="progress-bar-fill" id="missionProgress" style="width: 0%;"></div>
-                            </div>
-                            <div class="progress-info">
+                            <div class="map-progress-info">
                                 <span id="missionProgressText">0% Completed</span>
-                                <span id="statusDistance">0.00 m</span>
+                                <span id="statusDistance">0.00 m left</span>
                             </div>
-                        </div>
-                        <div class="mission-timeline">
-                            <div class="timeline-step active" id="step-init">
-                                <span class="step-bullet">1</span>
-                                <span class="step-text">Mission Initiated</span>
-                            </div>
-                            <div class="timeline-step" id="step-route">
-                                <span class="step-bullet">2</span>
-                                <span class="step-text">In Route</span>
-                            </div>
-                            <div class="timeline-step" id="step-reached">
-                                <span class="step-bullet">3</span>
-                                <span class="step-text">Arrived at Goal</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="ui-card robot-info-card">
-                        <div class="card-header">
-                            <h3>Wheeled Robot Trailer</h3>
-                            <span class="robot-model">WRT-87 Max</span>
-                        </div>
-                        <div class="robot-specs">
-                            <div class="spec-box">
-                                <span class="spec-val">500 g</span>
-                                <span class="spec-lbl">Payload</span>
-                            </div>
-                            <div class="spec-box">
-                                <span class="spec-val">70k cc</span>
-                                <span class="spec-lbl">Volume</span>
-                            </div>
-                            <div class="spec-box">
-                                <span class="spec-val">24 in</span>
-                                <span class="spec-lbl">Length</span>
-                            </div>
-                            <div class="spec-box">
-                                <span class="spec-val">12 in</span>
-                                <span class="spec-lbl">Width</span>
+                            <div class="map-timeline">
+                                <div class="map-timeline-step active" id="step-init">
+                                    <div class="map-step-bullet">1</div>
+                                    <span class="map-step-label">Initiated</span>
+                                </div>
+                                <div class="map-timeline-step" id="step-route">
+                                    <div class="map-step-bullet">2</div>
+                                    <span class="map-step-label">In Route</span>
+                                </div>
+                                <div class="map-timeline-step" id="step-reached">
+                                    <div class="map-step-bullet">3</div>
+                                    <span class="map-step-label">Arrived</span>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Right Column: Map & Waypoints -->
+                <!-- Right Column: Destination Selector & Controls -->
                 <div class="grid-col col-right">
-                    <div class="ui-card map-card-container">
-                        <div class="card-header">
-                            <h3>Map Overview</h3>
-                        </div>
-                        <div class="map-container" id="mapContainer">
-                            <canvas id="mapCanvas"></canvas>
-                        </div>
-                    </div>
-
                     <div class="ui-card control-card">
                         <div class="card-header">
                             <h3>Select Destination</h3>
@@ -1583,6 +2062,55 @@
         </div>
     </div>
 
+    <!-- Restaurant Menu Modal -->
+    <div class="menu-overlay" id="restaurantMenuModal">
+        <div class="menu-modal">
+            <div class="menu-modal-header">
+                <div class="menu-header-info">
+                    <h2 id="menuModalTitle">🍽️ Table — Menu</h2>
+                    <p>Robot is waiting at your table. Place your order!</p>
+                </div>
+                <div class="menu-waiting-badge">🤖 Robot Waiting</div>
+            </div>
+            <div class="menu-tabs">
+                <button class="menu-tab active" onclick="switchMenuTab('starters',this)">🥗 Starters</button>
+                <button class="menu-tab" onclick="switchMenuTab('mains',this)">🍛 Main Course</button>
+                <button class="menu-tab" onclick="switchMenuTab('drinks',this)">🥤 Drinks</button>
+            </div>
+            <div class="menu-body" id="menuItemsContainer"></div>
+            <div class="menu-cart">
+                <div class="cart-items-preview" id="cartItemsPreview">
+                    <span class="cart-empty-msg">No items added yet — browse the menu above!</span>
+                </div>
+                <div class="cart-footer">
+                    <div class="cart-total">Total: <span id="cartTotal">₹0</span></div>
+                    <div class="cart-actions">
+                        <button class="btn-task-done-menu" onclick="taskDone()">🚪 Task Done</button>
+                        <button class="btn-place-order" id="placeOrderBtn" onclick="placeOrder()" disabled>✅ Place Order</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Arrival Prompt Modal (return visits) -->
+    <div class="menu-overlay" id="arrivalPromptModal">
+        <div class="arrival-modal">
+            <div class="arrival-icon">🤖</div>
+            <h2 id="arrivalTitle">Arrived at Table</h2>
+            <p id="arrivalDesc">The robot is waiting. Would you like to place an order or release the robot?</p>
+            <div class="arrival-actions">
+                <button class="modal-action-btn primary" onclick="openMenuFromPrompt()">🍽️ Open Menu &amp; Order</button>
+                <button class="modal-action-btn secondary" onclick="taskDoneFromPrompt()">🚪 Task Done — Release Robot</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Order Success Toast -->
+    <div class="order-toast" id="orderToast">
+        <span>✅</span><span id="orderToastMsg">Order placed!</span>
+    </div>
+
     <script>
         // Setup API connection parameters
         const API_BASE = window.location.protocol === 'file:' ? 'http://localhost:8080/api' : `${window.location.origin}/api`;
@@ -1591,6 +2119,247 @@
         let pendingWaypoint = null;
 
         const wpNames = { 0: "Base Station", 1: "Table 1", 2: "Table 2", 3: "Table 3", 4: "Table 4" };
+
+        // ── Restaurant Feature State ──
+        const visitedTables = new Set();
+        let isWaitingAtTable = false;
+        let currentWaitingTableId = null;
+        let currentWaitingTableName = null;
+        let prevRobotStatus = null;
+        let cart = {};
+        let orderCounter = 0;
+        const orders = [];
+
+        const MENU = {
+            starters: [
+                { id:'s1', name:'Veg Soup',     emoji:'🍲', price:120, desc:'Warm & comforting' },
+                { id:'s2', name:'Caesar Salad', emoji:'🥗', price:180, desc:'Fresh romaine & croutons' },
+                { id:'s3', name:'Spring Rolls', emoji:'🥟', price:150, desc:'Crispy & golden' },
+                { id:'s4', name:'Paneer Tikka', emoji:'🧀', price:200, desc:'Tandoor-spiced' },
+            ],
+            mains: [
+                { id:'m1', name:'Veg Burger',  emoji:'🍔', price:250, desc:'Classic with fries' },
+                { id:'m2', name:'Margherita',  emoji:'🍕', price:320, desc:'8" wood-fired pizza' },
+                { id:'m3', name:'Fried Rice',  emoji:'🍛', price:220, desc:'Wok-tossed veggies' },
+                { id:'m4', name:'Pasta',       emoji:'🍝', price:280, desc:'Creamy arrabiata' },
+                { id:'m5', name:'Dal Makhani', emoji:'🫕', price:200, desc:'Slow-cooked lentils' },
+            ],
+            drinks: [
+                { id:'d1', name:'Lemonade',      emoji:'🍋', price:80,  desc:'Fresh squeezed' },
+                { id:'d2', name:'Cold Coffee',   emoji:'☕', price:120, desc:'Chilled & creamy' },
+                { id:'d3', name:'Mango Shake',   emoji:'🥭', price:140, desc:'Thick & sweet' },
+                { id:'d4', name:'Mineral Water', emoji:'💧', price:40,  desc:'500ml bottle' },
+            ]
+        };
+        const ALL_ITEMS = [...MENU.starters, ...MENU.mains, ...MENU.drinks];
+
+        function getTableIdFromName(name) {
+            if (!name || name === 'Base Station') return 0;
+            const m = name.match(/\d+/);
+            return m ? parseInt(m[0]) : -1;
+        }
+
+        // ── Arrival Detection & Handling ──
+        function onRobotArrived(position) {
+            isWaitingAtTable = true;
+            currentWaitingTableName = position;
+            currentWaitingTableId = getTableIdFromName(position);
+            const wb = document.getElementById('waitingBadge');
+            if (wb) { wb.textContent = '⏳ Robot waiting at ' + position; wb.classList.add('visible'); }
+            playInteractionSound(600, 'sine', 0.3, 0.06);
+            if (!visitedTables.has(currentWaitingTableId)) {
+                visitedTables.add(currentWaitingTableId);
+                setTimeout(() => openRestaurantMenu(), 600);
+            } else {
+                setTimeout(() => openArrivalPrompt(position), 400);
+            }
+        }
+
+        // ── Menu Modal ──
+        function openRestaurantMenu() {
+            cart = {};
+            document.getElementById('menuModalTitle').textContent = '🍽️ ' + currentWaitingTableName + ' — Menu';
+            document.querySelectorAll('.menu-tab').forEach((t,i) => t.classList.toggle('active', i===0));
+            renderMenuItems('starters');
+            updateCartUI();
+            document.getElementById('restaurantMenuModal').classList.add('open');
+        }
+        function openMenuFromPrompt() {
+            document.getElementById('arrivalPromptModal').classList.remove('open');
+            openRestaurantMenu();
+        }
+        function switchMenuTab(category, btn) {
+            document.querySelectorAll('.menu-tab').forEach(t => t.classList.remove('active'));
+            btn.classList.add('active');
+            renderMenuItems(category);
+            playInteractionSound(500, 'sine', 0.04);
+        }
+        function renderMenuItems(category) {
+            const items = MENU[category];
+            document.getElementById('menuItemsContainer').innerHTML = items.map(item => `
+                <div class="menu-item-row" id="row-${item.id}" style="border-color:${cart[item.id]?'var(--accent)':''}">
+                    <div class="menu-item-info">
+                        <span class="menu-item-emoji">${item.emoji}</span>
+                        <div class="menu-item-details"><h4>${item.name}</h4><span>${item.desc}</span></div>
+                    </div>
+                    <div class="menu-item-controls">
+                        <span class="menu-item-price">₹${item.price}</span>
+                        <button class="qty-btn" onclick="changeQty('${item.id}',-1)">−</button>
+                        <span class="qty-display" id="qty-${item.id}">${cart[item.id]||0}</span>
+                        <button class="qty-btn" onclick="changeQty('${item.id}',1)">+</button>
+                    </div>
+                </div>`).join('');
+        }
+        function changeQty(itemId, delta) {
+            const cur = cart[itemId] || 0;
+            const nv = Math.max(0, cur + delta);
+            if (nv === 0) delete cart[itemId]; else cart[itemId] = nv;
+            const qEl = document.getElementById('qty-' + itemId);
+            if (qEl) qEl.textContent = nv;
+            const rEl = document.getElementById('row-' + itemId);
+            if (rEl) rEl.style.borderColor = nv > 0 ? 'var(--accent)' : '';
+            updateCartUI();
+            playInteractionSound(nv > cur ? 700 : 400, 'sine', 0.04);
+        }
+        function updateCartUI() {
+            const preview = document.getElementById('cartItemsPreview');
+            const totalEl = document.getElementById('cartTotal');
+            const orderBtn = document.getElementById('placeOrderBtn');
+            const entries = Object.entries(cart);
+            if (!entries.length) {
+                preview.innerHTML = '<span class="cart-empty-msg">No items added yet — browse the menu above!</span>';
+                totalEl.textContent = '₹0'; orderBtn.disabled = true; return;
+            }
+            let total = 0;
+            const chips = entries.map(([id, qty]) => {
+                const item = ALL_ITEMS.find(i => i.id === id);
+                if (!item) return '';
+                total += item.price * qty;
+                return `<span class="cart-chip">${item.emoji} ${item.name} ×${qty}</span>`;
+            });
+            preview.innerHTML = chips.join('');
+            totalEl.textContent = '₹' + total;
+            orderBtn.disabled = false;
+        }
+        function placeOrder() {
+            const entries = Object.entries(cart);
+            if (!entries.length) return;
+            orderCounter++;
+            const items = entries.map(([id, qty]) => { const i = ALL_ITEMS.find(x=>x.id===id); return {...i, qty, sub: i.price*qty}; });
+            const total = items.reduce((s,i) => s+i.sub, 0);
+            orders.push({ id:'ORD-'+String(orderCounter).padStart(3,'0'), tableId:currentWaitingTableId, tableName:currentWaitingTableName, items, total, time:new Date().toLocaleTimeString(), status:'pending' });
+            document.getElementById('restaurantMenuModal').classList.remove('open');
+            cart = {};
+            showToast('Order ORD-' + String(orderCounter).padStart(3,'0') + ' placed for ' + currentWaitingTableName + '! Total: ₹' + total);
+            playInteractionSound(800, 'sine', 0.2, 0.06);
+            renderOrdersSidebar();
+            updateOrdersBadge();
+        }
+        function showToast(msg) {
+            const t = document.getElementById('orderToast');
+            document.getElementById('orderToastMsg').textContent = msg;
+            t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), 4000);
+        }
+
+        // ── Orders Sidebar ──
+        let ordersSidebarOpen = false;
+        function toggleOrdersSidebar() {
+            ordersSidebarOpen = !ordersSidebarOpen;
+            const sb = document.getElementById('ordersSidebar');
+            const navItem = document.getElementById('ordersNavItem');
+            sb.classList.toggle('open', ordersSidebarOpen);
+            navItem.classList.toggle('active', ordersSidebarOpen);
+            if (ordersSidebarOpen) renderOrdersSidebar();
+        }
+        function updateOrdersBadge() {
+            const badge = document.getElementById('ordersBadge');
+            if (!badge) return;
+            const count = orders.length;
+            badge.textContent = count;
+            badge.style.display = count > 0 ? 'inline-block' : 'none';
+        }
+        function renderOrdersSidebar() {
+            const body = document.getElementById('ordersSidebarBody');
+            const subtitle = document.getElementById('ordersSidebarSubtitle');
+            if (!body) return;
+            // Group orders by tableId
+            const grouped = {};
+            orders.forEach(o => {
+                if (!grouped[o.tableId]) grouped[o.tableId] = { tableName: o.tableName, tableId: o.tableId, items: {}, total: 0, orderIds: [] };
+                o.items.forEach(it => {
+                    if (!grouped[o.tableId].items[it.id]) grouped[o.tableId].items[it.id] = { ...it, qty: 0, total: 0 };
+                    grouped[o.tableId].items[it.id].qty += it.qty;
+                    grouped[o.tableId].items[it.id].total += it.sub;
+                });
+                grouped[o.tableId].total += o.total;
+                grouped[o.tableId].orderIds.push(o.id);
+            });
+            const tableIds = Object.keys(grouped);
+            if (!tableIds.length) {
+                subtitle.textContent = 'No active orders';
+                body.innerHTML = '<div class="orders-empty"><div class="orders-empty-icon">🍽️</div><strong>No orders yet</strong><span>Orders will appear here when customers place them through the robot.</span></div>';
+                return;
+            }
+            subtitle.textContent = tableIds.length + ' table(s) with orders';
+            body.innerHTML = tableIds.map(tid => {
+                const g = grouped[tid];
+                const itemLines = Object.values(g.items).map(it =>
+                    `<div class="order-item-line"><span class="order-item-name">${it.emoji} ${it.name} ×${it.qty}</span><span class="order-item-sub">₹${it.total}</span></div>`
+                ).join('');
+                return `<div class="order-table-card">
+                    <div class="order-table-header">
+                        <span class="order-table-name">📍 ${g.tableName}</span>
+                        <span class="order-table-count">${g.orderIds.length} order(s)</span>
+                    </div>
+                    <div class="order-items-list">${itemLines}</div>
+                    <div class="order-table-footer">
+                        <div class="order-table-total">Total: <span>₹${g.total}</span></div>
+                        <button class="btn-clear-table" onclick="clearTableOrders(${tid})">🔄 New Customer</button>
+                    </div>
+                </div>`;
+            }).join('');
+        }
+        function clearTableOrders(tableId) {
+            // Remove all orders for this table
+            for (let i = orders.length - 1; i >= 0; i--) {
+                if (orders[i].tableId === tableId) orders.splice(i, 1);
+            }
+            // Reset visited so next arrival auto-opens menu
+            visitedTables.delete(tableId);
+            renderOrdersSidebar();
+            updateOrdersBadge();
+            const tName = wpNames[tableId] || 'Table ' + tableId;
+            showToast('🔄 ' + tName + ' reset as new customer table!');
+            playInteractionSound(600, 'sine', 0.08);
+        }
+
+        // ── Arrival Prompt ──
+        function openArrivalPrompt(position) {
+            document.getElementById('arrivalTitle').textContent = '🤖 Arrived at ' + position;
+            document.getElementById('arrivalDesc').textContent = 'The robot is waiting at ' + position + '. Would you like to place an order or release the robot?';
+            document.getElementById('arrivalPromptModal').classList.add('open');
+        }
+
+        // ── Task Done ──
+        function taskDone() {
+            document.getElementById('restaurantMenuModal').classList.remove('open');
+            releaseRobot();
+        }
+        function taskDoneFromPrompt() {
+            document.getElementById('arrivalPromptModal').classList.remove('open');
+            releaseRobot();
+        }
+        function releaseRobot() {
+            isWaitingAtTable = false;
+            const wb = document.getElementById('waitingBadge');
+            if (wb) wb.classList.remove('visible');
+            if (!state.waypointQueue || state.waypointQueue.length === 0) {
+                sendCommand('navigate', { waypoint: 0, mode: 'shift' });
+            }
+            showToast('Robot released — heading back to base.');
+            playInteractionSound(500, 'triangle', 0.12);
+        }
 
         // Robot logical positioning coordinates for drawing
         let robotX = 0;   // logical x (-2 to 2)
@@ -1787,7 +2556,17 @@
         async function updateState() {
             try {
                 const response = await fetch(`${API_BASE}/state`);
-                state = await response.json();
+                const newState = await response.json();
+
+                // Arrival detection: Navigating -> Idle at a Table
+                if (prevRobotStatus === "Navigating" && newState.robotStatus === "Idle"
+                    && newState.currentPosition && newState.currentPosition !== "Base Station"
+                    && !isWaitingAtTable) {
+                    state = newState;
+                    onRobotArrived(newState.currentPosition);
+                }
+                prevRobotStatus = newState.robotStatus;
+                state = newState;
 
                 // 1. Core Header Stats Update
                 const statusRobotEl = document.getElementById('headerSubtitle');
@@ -1888,20 +2667,40 @@
                 } else if (state.robotStatus === "Idle" && state.currentPosition !== "Base Station") {
                     progressPct = 100;
                 }
-                
+
                 document.getElementById('routeProgressDot').style.left = `${progressPct}%`;
-                document.getElementById('missionProgress').style.width = `${progressPct}%`;
+                const mapFill = document.getElementById('mapRouteFill');
+                if (mapFill) mapFill.style.width = `${progressPct}%`;
                 document.getElementById('missionProgressText').textContent = `${Math.round(progressPct)}% Completed`;
                 document.getElementById('statusDistance').textContent = `${state.distanceToGoal.toFixed(2)} m left`;
+
+                // Update map status badge
+                const mapBadge = document.getElementById('mapStatusBadge');
+                const mapBadgeText = document.getElementById('mapStatusBadgeText');
+                if (mapBadge && mapBadgeText) {
+                    mapBadge.className = 'map-route-status-badge';
+                    if (state.robotStatus === "Navigating") {
+                        mapBadgeText.textContent = 'Navigating';
+                    } else if (state.robotStatus === "Paused") {
+                        mapBadge.classList.add('paused');
+                        mapBadgeText.textContent = 'Paused';
+                    } else if (state.robotStatus === "Emergency Stop") {
+                        mapBadge.classList.add('emergency');
+                        mapBadgeText.textContent = 'Emergency Stop';
+                    } else {
+                        mapBadge.classList.add('idle');
+                        mapBadgeText.textContent = 'Idle';
+                    }
+                }
 
                 // Update Timeline steps
                 const stepInit = document.getElementById('step-init');
                 const stepRoute = document.getElementById('step-route');
                 const stepReached = document.getElementById('step-reached');
 
-                stepInit.className = "timeline-step";
-                stepRoute.className = "timeline-step";
-                stepReached.className = "timeline-step";
+                stepInit.className = "map-timeline-step";
+                stepRoute.className = "map-timeline-step";
+                stepReached.className = "map-timeline-step";
 
                 if (state.robotStatus === "Navigating") {
                     stepInit.classList.add('completed');
